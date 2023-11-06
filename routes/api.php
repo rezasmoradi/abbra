@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -17,3 +20,24 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::group(['prefix' => '/auth'], function () {
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/verify', [AuthController::class, 'verify']);
+    Route::post('/login', [AuthController::class, 'login']);
+});
+
+Route::middleware('auth:sanctum')
+    ->post('/logout', [AuthController::class, 'logout']);
+
+Route::group(['middleware' => ['auth:sanctum'], 'prefix' => '/user'], function () {
+    Route::get('', [UserController::class, 'show']);
+    Route::post('/update', [UserController::class, 'update']);
+    Route::post('/reserves', [UserController::class, 'reserves']);
+});
+
+Route::middleware('auth:sanctum')->prefix('/service')->apiResource('', ServiceController::class);
+
+Route::middleware(['auth:sanctum'])->post('/service', [ServiceController::class, 'store']);
+Route::middleware(['auth:sanctum'])->delete('/service/{id}', [ServiceController::class, 'destroy']);
+Route::middleware(['auth:sanctum'])->put('/service/{id}', [ServiceController::class, 'update']);
