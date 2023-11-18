@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ReserveController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -31,9 +32,14 @@ Route::middleware('auth:sanctum')
     ->post('/logout', [AuthController::class, 'logout']);
 
 Route::group(['middleware' => ['auth:sanctum'], 'prefix' => '/user'], function () {
-    Route::get('', [UserController::class, 'show']);
+    Route::get('/me', [UserController::class, 'show']);
     Route::post('/update', [UserController::class, 'update']);
     Route::post('/reserves', [UserController::class, 'reserves']);
+    Route::post('/promote/admin', [UserController::class, 'promote']);
+
+    Route::group(['middleware' => 'admin'], function () {
+        Route::get('', [UserController::class, 'index']);
+    });
 });
 
 Route::middleware('auth:sanctum')->prefix('/service')->apiResource('', ServiceController::class);
@@ -41,3 +47,11 @@ Route::middleware('auth:sanctum')->prefix('/service')->apiResource('', ServiceCo
 Route::middleware(['auth:sanctum'])->post('/service', [ServiceController::class, 'store']);
 Route::middleware(['auth:sanctum'])->delete('/service/{id}', [ServiceController::class, 'destroy']);
 Route::middleware(['auth:sanctum'])->put('/service/{id}', [ServiceController::class, 'update']);
+
+
+Route::group(['middleware' => ['auth:sanctum'], 'prefix' => '/reserve'], function () {
+    Route::get('/', [ReserveController::class, 'index']);
+    Route::post('/', [ReserveController::class, 'create']);
+
+    Route::delete('/{id}', [ReserveController::class, 'delete']);
+});

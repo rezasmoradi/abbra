@@ -52,6 +52,11 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
+    public function isAdmin()
+    {
+        return $this->role === static::ROLE_ADMIN;
+    }
+
     public function reserves()
     {
         return $this->hasMany(Reserve::class, 'customer_id');

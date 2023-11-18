@@ -9,6 +9,11 @@ use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
+    public function index()
+    {
+        return User::all();
+    }
+
     public function show(Request $request)
     {
         // TODO: UserResource
@@ -26,6 +31,18 @@ class UserController extends Controller
         } catch (\Exception $e) {
             Log::error($e);
             return response()->json(['message' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function promote()
+    {
+        if (auth()->user()->isAdmin() || User::query()->count() === 1) {
+            $user = auth()->user();
+            $user->role = User::ROLE_ADMIN;
+            $user->save();
+            return \response()->json(['message' => 'کاربر با موفقیت ارتقا یافت']);
+        } else {
+            return \response()->json(['message' => 'شما مجاز به انجام این کار نیستید'],  Response::HTTP_FORBIDDEN);
         }
     }
 
