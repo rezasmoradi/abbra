@@ -18,10 +18,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
 Route::group(['prefix' => '/auth'], function () {
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/verify', [AuthController::class, 'verify']);
@@ -42,11 +38,13 @@ Route::group(['middleware' => ['auth:sanctum'], 'prefix' => '/user'], function (
     });
 });
 
-Route::middleware('auth:sanctum')->prefix('/service')->apiResource('', ServiceController::class);
+//Route::middleware('auth:sanctum')->prefix('/service')->apiResource('', ServiceController::class);
 
 Route::middleware(['auth:sanctum'])->post('/service', [ServiceController::class, 'store']);
 Route::middleware(['auth:sanctum'])->delete('/service/{id}', [ServiceController::class, 'destroy']);
 Route::middleware(['auth:sanctum'])->put('/service/{id}', [ServiceController::class, 'update']);
+Route::middleware(['auth:sanctum'])->get('/service', [ServiceController::class, 'index']);
+Route::middleware(['auth:sanctum'])->get('/service/{id}', [ServiceController::class, 'show']);
 
 
 Route::group(['middleware' => ['auth:sanctum'], 'prefix' => '/reserve'], function () {
