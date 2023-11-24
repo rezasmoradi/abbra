@@ -30,7 +30,7 @@ Route::middleware('auth:sanctum')
 Route::group(['middleware' => ['auth:sanctum'], 'prefix' => '/user'], function () {
     Route::get('/profile', [UserController::class, 'show']);
     Route::post('/profile/picture', [UserController::class, 'avatar']);
-    Route::post('/update', [UserController::class, 'update']);
+    Route::put('/update', [UserController::class, 'update']);
     Route::post('/reserves', [UserController::class, 'reserves']);
     Route::post('/promote/admin', [UserController::class, 'promote']);
 
