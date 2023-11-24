@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\OperatorController;
 use App\Http\Controllers\ReserveController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\TagController;
@@ -32,11 +33,18 @@ Route::group(['middleware' => ['auth:sanctum'], 'prefix' => '/user'], function (
     Route::post('/profile/picture', [UserController::class, 'avatar']);
     Route::put('/update', [UserController::class, 'update']);
     Route::post('/reserves', [UserController::class, 'reserves']);
-    Route::post('/promote/admin', [UserController::class, 'promote']);
+    Route::post('/promote/{user_id}/{role}', [UserController::class, 'promote']);
 
     Route::group(['middleware' => 'admin'], function () {
         Route::get('', [UserController::class, 'index']);
     });
+});
+
+Route::group(['middleware' => ['auth:sanctum'], 'prefix' => '/operator'], function () {
+    Route::get('', [OperatorController::class, 'index']);
+    Route::middleware(['admin'])->post('', [OperatorController::class, 'store']);
+    Route::put('/update/{operator_id}', [OperatorController::class, 'update']);
+    Route::delete('/{operator_id}', [OperatorController::class, 'delete']);
 });
 
 Route::get('/tag', [TagController::class, 'index']);

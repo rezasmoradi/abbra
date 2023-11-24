@@ -8,6 +8,7 @@ use App\Models\Service;
 use App\Models\ServiceWorker;
 use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class ReserveController extends Controller
 {
@@ -24,7 +25,9 @@ class ReserveController extends Controller
         try {
             $serviceTimeCost = Service::query()->findOrFail($request->service_id)->time_cost;
             $reserve = Reserve::query()->where('service_id', $request->service_id)->latest()->first();
-            if (!$reserve || Carbon::parse($reserve->reserved_at)->addMinutes($serviceTimeCost)->greaterThan($request->reserved_at)) {
+            $time = Carbon::parse($reserve->reserved_at);
+            $sameDay = $time->isSameDay($request->reserved_at);
+            if (!$reserve || !$sameDay ||($sameDay && $time->addMinutes($serviceTimeCost)->greaterThan($request->reserved_at))) {
                 $request->user()->reserves()->create([
                     'service_id' => $request->service_id,
                     'reserved_at' => $request->reserved_at
@@ -36,6 +39,7 @@ class ReserveController extends Controller
             }
 
         } catch (\Exception $exception) {
+            Log::error($exception->getMessage());
             return response()->json(['message' => 'خطا در رزرو نوبت'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }

@@ -36,15 +36,20 @@ class UserController extends Controller
         }
     }
 
-    public function promote()
+    public function promote(Request $request)
     {
-        if (auth()->user()->isAdmin() || User::query()->count() === 1) {
-            $user = auth()->user();
-            $user->role = User::ROLE_ADMIN;
-            $user->save();
-            return \response()->json(['message' => 'کاربر با موفقیت ارتقا یافت']);
+        $role = $request->role;
+        if ($role === User::ROLE_OPERATOR || $role === User::ROLE_ADMIN) {
+            if (auth()->user()->isAdmin() || User::query()->count() === 1) {
+                $user = User::query()->findOrFail($request->user_id);
+                $user->role = $role;
+                $user->save();
+                return \response()->json(['message' => 'کاربر با موفقیت ارتقا یافت']);
+            } else {
+                return \response()->json(['message' => 'شما مجاز به انجام این کار نیستید'], Response::HTTP_FORBIDDEN);
+            }
         } else {
-            return \response()->json(['message' => 'شما مجاز به انجام این کار نیستید'], Response::HTTP_FORBIDDEN);
+            return \response()->json(['message' => 'نقش وارد شده صحیح نمی باشد'], Response::HTTP_FORBIDDEN);
         }
     }
 

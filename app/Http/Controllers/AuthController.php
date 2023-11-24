@@ -24,7 +24,6 @@ class AuthController extends Controller
             return response()->json(['errors' => $validation->errors()]);
         }
 
-        // TODO: get first name and last name
         $request->validate(['email' => 'required|email'], $request->only(['email', 'password']));
 
         if (User::query()->where('email', $request->email)->first()) {

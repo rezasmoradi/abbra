@@ -14,9 +14,9 @@ class User extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
     const ROLE_ADMIN = 'admin';
-    const ROLE_HAIR_DRESSER = 'hair_dresser';
+    const ROLE_OPERATOR = 'operator';
     const ROLE_CUSTOMER = 'customer';
-    const ROLES = [self::ROLE_ADMIN, self::ROLE_HAIR_DRESSER, self::ROLE_CUSTOMER];
+    const ROLES = [self::ROLE_ADMIN, self::ROLE_OPERATOR, self::ROLE_CUSTOMER];
 
     /**
      * The attributes that are mass assignable.
