@@ -101,9 +101,9 @@ class TagController extends Controller
 
     public function photos(Request $request)
     {
-        $tag = $request->tag_id;
+        $tag = $request->tag_name;
         $photos = PhotoTag::query()->when($tag, function ($query) use ($tag) {
-            return $query->where('tag_id', $tag);
+            return $query->leftJoin('tags', 'tags.id', '=', 'photo_tags.tag_id')->where('tags.name', 'LIKE', '%' . $tag . '%');
         })->groupBy('file_name')->paginate(15);
 
         return PhotoResource::collection($photos);

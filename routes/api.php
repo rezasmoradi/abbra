@@ -5,7 +5,6 @@ use App\Http\Controllers\ReserveController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\UserController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -41,7 +40,7 @@ Route::group(['middleware' => ['auth:sanctum'], 'prefix' => '/user'], function (
 });
 
 Route::get('/tag', [TagController::class, 'index']);
-Route::get('/photos/{tag_id?}', [TagController::class, 'photos']);
+Route::get('/photos/{tag_name?}', [TagController::class, 'photos']);
 Route::group(['middleware' => 'auth:sanctum', 'prefix' => '/tag'], function (){
     Route::middleware(['admin'])->post('', [TagController::class, 'store']);
     Route::middleware(['admin'])->put('/{file_name}', [TagController::class, 'update']);
