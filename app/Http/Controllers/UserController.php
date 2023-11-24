@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -16,13 +17,11 @@ class UserController extends Controller
 
     public function show(Request $request)
     {
-        // TODO: UserResource
         return response()->json($request->user());
     }
 
-    public function update(Request $request)
+    public function update(UpdateUserRequest $request)
     {
-        // TODO: validate
         try {
             $user = $request->user();
             $user->update($request->all());
