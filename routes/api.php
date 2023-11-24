@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ReserveController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\TagController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -28,7 +29,8 @@ Route::middleware('auth:sanctum')
     ->post('/logout', [AuthController::class, 'logout']);
 
 Route::group(['middleware' => ['auth:sanctum'], 'prefix' => '/user'], function () {
-    Route::get('/me', [UserController::class, 'show']);
+    Route::get('/profile', [UserController::class, 'show']);
+    Route::post('/profile/picture', [UserController::class, 'avatar']);
     Route::post('/update', [UserController::class, 'update']);
     Route::post('/reserves', [UserController::class, 'reserves']);
     Route::post('/promote/admin', [UserController::class, 'promote']);
@@ -38,7 +40,14 @@ Route::group(['middleware' => ['auth:sanctum'], 'prefix' => '/user'], function (
     });
 });
 
-//Route::middleware('auth:sanctum')->prefix('/service')->apiResource('', ServiceController::class);
+Route::get('/tag', [TagController::class, 'index']);
+Route::get('/photos/{tag_id?}', [TagController::class, 'photos']);
+Route::group(['middleware' => 'auth:sanctum', 'prefix' => '/tag'], function (){
+    Route::middleware(['admin'])->post('', [TagController::class, 'store']);
+    Route::middleware(['admin'])->put('/{file_name}', [TagController::class, 'update']);
+    Route::middleware(['admin'])->delete('/{tag_id}', [TagController::class, 'delete']);
+    Route::middleware(['admin'])->delete('/photo/{file_name}', [TagController::class, 'destroy']);
+});
 
 Route::middleware(['auth:sanctum'])->post('/service', [ServiceController::class, 'store']);
 Route::middleware(['auth:sanctum'])->delete('/service/{id}', [ServiceController::class, 'destroy']);
