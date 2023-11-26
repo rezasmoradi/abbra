@@ -23,7 +23,8 @@ class CreateReserveRequest extends FormRequest
     {
         return [
             'service_id' => 'required|exists:services,id',
-            'reserved_at' => 'required|date|after:now'
+            'reserved_at' => 'required|date|after:now',
+            'service_worker_id' => 'required|exists:service_workers,service_worker_id'
         ];
     }
 }

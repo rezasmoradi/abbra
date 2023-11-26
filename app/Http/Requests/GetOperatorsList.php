@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UploadPhotoRequest extends FormRequest
+class GetOperatorsList extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,9 +22,8 @@ class UploadPhotoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'photo' => 'nullable|image|max:2048',
-            'tags' => 'required|array',
-            'tags.*' => 'string|max:50'
+            'service_id' => 'required|exists:services,id',
+            'reserved_at' => 'required|date|after:now'
         ];
     }
 }

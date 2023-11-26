@@ -40,8 +40,8 @@ Route::group(['middleware' => ['auth:sanctum'], 'prefix' => '/user'], function (
     });
 });
 
+Route::get('/operator', [OperatorController::class, 'index']);
 Route::group(['middleware' => ['auth:sanctum'], 'prefix' => '/operator'], function () {
-    Route::get('', [OperatorController::class, 'index']);
     Route::middleware(['admin'])->post('', [OperatorController::class, 'store']);
     Route::put('/update/{operator_id}', [OperatorController::class, 'update']);
     Route::delete('/{operator_id}', [OperatorController::class, 'delete']);
@@ -56,7 +56,7 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => '/tag'], function (){
     Route::middleware(['admin'])->delete('/photo/{file_name}', [TagController::class, 'destroy']);
 });
 
-Route::middleware(['auth:sanctum'])->post('/service', [ServiceController::class, 'store']);
+Route::middleware(['auth:sanctum', 'admin'])->post('/service', [ServiceController::class, 'store']);
 Route::middleware(['auth:sanctum'])->delete('/service/{id}', [ServiceController::class, 'destroy']);
 Route::middleware(['auth:sanctum'])->put('/service/{id}', [ServiceController::class, 'update']);
 Route::middleware(['auth:sanctum'])->get('/service', [ServiceController::class, 'index']);
@@ -65,6 +65,7 @@ Route::middleware(['auth:sanctum'])->get('/service/{id}', [ServiceController::cl
 
 Route::group(['middleware' => ['auth:sanctum'], 'prefix' => '/reserve'], function () {
     Route::get('/', [ReserveController::class, 'index']);
+    Route::get('/operators', [ReserveController::class, 'operators']);
     Route::post('/', [ReserveController::class, 'create']);
 
     Route::delete('/{id}', [ReserveController::class, 'delete']);

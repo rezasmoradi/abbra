@@ -10,7 +10,7 @@ class Reserve extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['customer_id', 'service_id', 'service_worker_id', 'reserved_at'];
+    protected $fillable = ['customer_id', 'service_id', 'service_worker_id', 'reserved_at', 'reserved_end_time'];
 
     public function customer()
     {

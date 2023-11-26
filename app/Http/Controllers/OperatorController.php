@@ -37,7 +37,7 @@ class OperatorController extends Controller
                 ]);
             }
             DB::commit();
-            return response()->json(compact('user'), Response::HTTP_CREATED);
+            return response()->json(compact('operator'), Response::HTTP_CREATED);
 
         } catch (\Exception $exception) {
             DB::rollBack();
@@ -60,7 +60,7 @@ class OperatorController extends Controller
                 }
             }
             DB::commit();
-            return response()->json(compact('user'), Response::HTTP_CREATED);
+            return response()->json(['message' => 'اپراتور با موفقیت ویرایش شد.'], Response::HTTP_CREATED);
 
         } catch (\Exception $exception) {
             DB::rollBack();
@@ -72,13 +72,20 @@ class OperatorController extends Controller
     {
         try {
             DB::beginTransaction();
-            ServiceWorker::query()->where('service_worker_id', $request->operator_id)->delete();
-            User::query()->findOrFail($request->operator_id)->delete();
+
+            ServiceWorker::query()->where('service_worker_id', $request->operator_id);
+            $user = User::query()->findOrFail($request->operator_id);
+            if ($user->isAdmin()) {
+                return response()->json(['message' => 'کاربر مدیر قابل حذف نیست.'], Response::HTTP_CREATED);
+            } else {
+                $user->delete();
+            }
             DB::commit();
-            return response()->json(compact('user'), Response::HTTP_CREATED);
+            return response()->json(['message' => 'اپراتور با موفقیت حذف شد.'], Response::HTTP_CREATED);
 
         } catch (\Exception $exception) {
             DB::rollBack();
+            Log::error($exception);
             return response()->json(['message', 'خطا در حذف اپراتور'], Response::HTTP_CREATED);
         }
     }

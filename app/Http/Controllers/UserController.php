@@ -62,7 +62,7 @@ class UserController extends Controller
 
         try {
             $user = $request->user();
-            if (Storage::disk('avatars')->exists($user->avatar)) {
+            if ($user->avatar && Storage::disk('avatars')->exists($user->avatar)) {
                 Storage::disk('avatars')->delete($user->avatar);
             }
 

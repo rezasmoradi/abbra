@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateReserveRequest;
+use App\Http\Requests\GetOperatorsList;
+use App\Http\Resources\UserResource;
 use App\Models\Reserve;
 use App\Models\Service;
 use App\Models\ServiceWorker;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
@@ -27,10 +30,12 @@ class ReserveController extends Controller
             $reserve = Reserve::query()->where('service_id', $request->service_id)->latest()->first();
             $time = Carbon::parse($reserve->reserved_at);
             $sameDay = $time->isSameDay($request->reserved_at);
-            if (!$reserve || !$sameDay ||($sameDay && $time->addMinutes($serviceTimeCost)->greaterThan($request->reserved_at))) {
+            if (!$reserve || !$sameDay || ($sameDay && $time->addMinutes($serviceTimeCost)->greaterThan($request->reserved_at))) {
                 $request->user()->reserves()->create([
                     'service_id' => $request->service_id,
-                    'reserved_at' => $request->reserved_at
+                    'reserved_at' => $request->reserved_at,
+                    'service_worker_id' => $request->service_worker_id,
+                    'reserved_end_time' => Carbon::parse($request->reserved_at)->addMinutes($serviceTimeCost)->toDateTimeString()
                 ]);
 
                 return response()->json(['message' => 'رزرو نوبت با موفقیت انجام شد.'], Response::HTTP_CREATED);
@@ -42,6 +47,24 @@ class ReserveController extends Controller
             Log::error($exception->getMessage());
             return response()->json(['message' => 'خطا در رزرو نوبت'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
+    }
+
+    public function operators(GetOperatorsList $request)
+    {
+        $service = Service::query()->findOrFail($request->service_id);
+        $reserveDate = Carbon::parse($request->reserved_at)->toDateString();
+        $reserveTime = Carbon::parse($request->reserved_at)->toTimeString();
+        $endDatetime = Carbon::parse($request->reserved_at)->addMinutes($service->time_cost)->toTimeString();
+        $operators = ServiceWorker::query()->select('users.*')
+            ->leftJoin('users', 'users.id', '=', 'service_workers.service_worker_id')
+            ->leftJoin('reserves', 'reserves.service_worker_id', '=', 'service_workers.service_worker_id')
+            ->where('service_workers.service_id', $request->service_id)
+            ->whereDate('reserves.reserved_at', '=', $reserveDate)
+            ->whereTime('reserves.reserved_at', '>', $endDatetime)
+            ->whereTime('reserves.reserved_end_time', '<', $reserveTime)
+            ->orWhereDate('reserves.reserved_at', '!=', $reserveDate)->paginate(15);
+
+        return UserResource::collection($operators);
     }
 
     public function delete(int $id)

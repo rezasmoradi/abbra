@@ -16,6 +16,7 @@ return new class extends Migration {
             $table->unsignedBigInteger('service_id');
             $table->unsignedBigInteger('service_worker_id');
             $table->timestamp('reserved_at');
+            $table->timestamp('reserved_end_time');
             $table->timestamps();
             $table->softDeletes();
 
