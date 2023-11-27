@@ -18,7 +18,7 @@ class ReserveController extends Controller
     public function index()
     {
         if (auth()->user()->isAdmin()) {
-            return response()->json(['reserves' => Reserve::with(['service', 'customer', 'operator'])]);
+            return response()->json(['reserves' => Reserve::with(['service', 'customer', 'operator'])->get()]);
         }
         return response()->json(['reserves' => auth()->user()->reserves()->get()]);
     }
