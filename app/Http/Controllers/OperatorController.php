@@ -46,6 +46,11 @@ class OperatorController extends Controller
         }
     }
 
+    public function show(Request $request)
+    {
+        return new UserResource(User::query()->findOrFail($request->operator_id));
+    }
+
     public function update(UpdateOperatorRequest $request)
     {
         try {

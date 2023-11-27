@@ -17,6 +17,11 @@ class Reserve extends Model
         return $this->belongsTo(User::class, 'customer_id');
     }
 
+    public function operator()
+    {
+        return $this->belongsTo(User::class, 'service_worker_id');
+    }
+
     public function service()
     {
         return $this->belongsTo(Service::class);

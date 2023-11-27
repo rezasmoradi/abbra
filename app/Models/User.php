@@ -57,8 +57,13 @@ class User extends Authenticatable
         return $this->role === static::ROLE_ADMIN;
     }
 
+    public function operator()
+    {
+        return $this->hasOne(ServiceWorker::class, 'service_worker_id');
+    }
+
     public function reserves()
     {
-        return $this->hasMany(Reserve::class, 'customer_id');
+        return $this->hasMany(Reserve::class, 'customer_id')->with(['service', 'operator']);
     }
 }

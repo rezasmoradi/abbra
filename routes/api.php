@@ -43,6 +43,7 @@ Route::group(['middleware' => ['auth:sanctum'], 'prefix' => '/user'], function (
 Route::get('/operator', [OperatorController::class, 'index']);
 Route::group(['middleware' => ['auth:sanctum'], 'prefix' => '/operator'], function () {
     Route::middleware(['admin'])->post('', [OperatorController::class, 'store']);
+    Route::get('/{operator_id}', [OperatorController::class, 'show']);
     Route::put('/update/{operator_id}', [OperatorController::class, 'update']);
     Route::delete('/{operator_id}', [OperatorController::class, 'delete']);
 });
