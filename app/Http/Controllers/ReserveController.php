@@ -62,7 +62,7 @@ class ReserveController extends Controller
             ->whereDate('reserves.reserved_at', '=', $reserveDate)
             ->whereTime('reserves.reserved_at', '>', $endDatetime)
             ->whereTime('reserves.reserved_end_time', '<', $reserveTime)
-            ->orWhereDate('reserves.reserved_at', '!=', $reserveDate)->paginate(15);
+            ->orWhereDate('reserves.reserved_at', '!=', $reserveDate)->get();
 
         return UserResource::collection($operators);
     }

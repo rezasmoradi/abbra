@@ -20,7 +20,7 @@ class TagController extends Controller
         $q = \request('q');
         $tags = Tag::with(['photos'])->when($q, function ($query) use ($q) {
             return $query->where('name', $q);
-        })->paginate('15');
+        })->get();
 
         return TagResource::collection($tags);
     }
@@ -104,7 +104,7 @@ class TagController extends Controller
         $tag = $request->tag_name;
         $photos = PhotoTag::query()->when($tag, function ($query) use ($tag) {
             return $query->leftJoin('tags', 'tags.id', '=', 'photo_tags.tag_id')->where('tags.name', 'LIKE', '%' . $tag . '%');
-        })->groupBy('file_name')->paginate(15);
+        })->groupBy('file_name')->get();
 
         return PhotoResource::collection($photos);
     }
