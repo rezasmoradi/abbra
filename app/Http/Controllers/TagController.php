@@ -30,7 +30,7 @@ class TagController extends Controller
         try {
             $file = $request->file('photo');
             $fileName = md5($file->hashName() . time());
-            $file->storeAs('', $fileName, 'avatars');
+            $file->storeAs('', $fileName, 'photos');
 
             foreach ($request->tags as $tag) {
                 $tag = Tag::query()->create(['name' => $tag]);
