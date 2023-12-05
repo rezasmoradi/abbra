@@ -28,9 +28,9 @@ class ReserveController extends Controller
         try {
             $serviceTimeCost = Service::query()->findOrFail($request->service_id)->time_cost;
             $reserve = Reserve::query()->where('service_id', $request->service_id)->latest()->first();
-            $time = Carbon::parse($reserve->reserved_at);
-            $sameDay = $time->isSameDay($request->reserved_at);
-            if (!$reserve || !$sameDay || ($sameDay && $time->addMinutes($serviceTimeCost)->greaterThan($request->reserved_at))) {
+            $time = $reserve ? Carbon::parse($reserve->reserved_at) : null;
+            $sameDay = $time ? $time->isSameDay($request->reserved_at) : null;
+            if (!$reserve || !$sameDay || $time === null || ($sameDay && $time->addMinutes($serviceTimeCost)->greaterThan($request->reserved_at))) {
                 $request->user()->reserves()->create([
                     'service_id' => $request->service_id,
                     'reserved_at' => $request->reserved_at,
